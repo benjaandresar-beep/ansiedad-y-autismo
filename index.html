@@ -1,0 +1,2682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a1d24" />
+  <meta name="description" content="Herramienta de regulación emocional para adolescentes" />
+  <title>Mi espacio de calma</title>
+  <style>
+    /* =====================================================
+       RESET & BASE
+    ===================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-dark: #1a1d24;
+      --bg-card: #22263a;
+      --accent: #5a6b8c;
+      --text-primary: #d4d8e8;
+      --text-secondary: #8892a8;
+      --crisis-accent: #4a7a6d;
+      --calm-accent: #6b7fa8;
+      --green-safe: #4a7a5a;
+      --yellow-caution: #8a7840;
+      --red-alert: #7a4a4a;
+      --orb-color: rgba(90, 107, 140, 0.3);
+      --orb-glow: rgba(90, 107, 140, 0.15);
+
+      --font-size-base: 1rem;
+      --font-size-sm: 0.875rem;
+      --font-size-lg: 1.125rem;
+      --font-size-xl: 1.375rem;
+      --font-size-2xl: 1.75rem;
+
+      --radius: 1rem;
+      --radius-sm: 0.5rem;
+      --transition: 0.25s ease;
+      --orb-scale: 1;
+    }
+
+    /* High contrast mode */
+    body.high-contrast {
+      --bg-dark: #000000;
+      --bg-card: #111111;
+      --accent: #7a9fcc;
+      --text-primary: #ffffff;
+      --text-secondary: #cccccc;
+      --crisis-accent: #66bbaa;
+      --calm-accent: #88aadd;
+    }
+
+    /* Large text mode */
+    body.large-text {
+      --font-size-base: 1.2rem;
+      --font-size-sm: 1rem;
+      --font-size-lg: 1.35rem;
+      --font-size-xl: 1.6rem;
+      --font-size-2xl: 2rem;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      font-size: var(--font-size-base);
+      line-height: 1.6;
+      min-height: 100dvh;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* =====================================================
+       SCREEN SYSTEM
+    ===================================================== */
+    .screen {
+      display: none;
+      min-height: 100dvh;
+      min-height: 100vh;
+      padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+      flex-direction: column;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* =====================================================
+       PERSISTENT CRISIS BUTTON
+    ===================================================== */
+    #crisis-persistent-btn {
+      position: fixed;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 9999;
+      background: rgba(74, 122, 109, 0.2);
+      border: 1px solid var(--crisis-accent);
+      color: var(--crisis-accent);
+      border-radius: 2rem;
+      padding: 0.4rem 0.85rem;
+      font-size: var(--font-size-sm);
+      font-family: inherit;
+      cursor: pointer;
+      transition: background var(--transition), opacity var(--transition);
+      opacity: 0;
+      pointer-events: none;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+
+    #crisis-persistent-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #crisis-persistent-btn:hover,
+    #crisis-persistent-btn:focus-visible {
+      background: rgba(74, 122, 109, 0.35);
+      outline: 2px solid var(--crisis-accent);
+      outline-offset: 2px;
+    }
+
+    /* =====================================================
+       SETTINGS BUTTON (fixed)
+    ===================================================== */
+    #settings-btn {
+      position: fixed;
+      top: 0.75rem;
+      left: 0.75rem;
+      z-index: 9998;
+      background: transparent;
+      border: 1px solid rgba(138, 146, 168, 0.3);
+      color: var(--text-secondary);
+      border-radius: 50%;
+      width: 2.25rem;
+      height: 2.25rem;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--transition);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #settings-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #settings-btn:hover,
+    #settings-btn:focus-visible {
+      background: rgba(138, 146, 168, 0.15);
+      outline: 2px solid var(--text-secondary);
+      outline-offset: 2px;
+    }
+
+    /* =====================================================
+       BUTTONS
+    ===================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.9rem 1.5rem;
+      font-size: var(--font-size-base);
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background var(--transition);
+      text-align: center;
+      line-height: 1.4;
+      text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .btn:active {
+        transform: scale(0.97);
+      }
+    }
+
+    .btn-primary {
+      background: var(--calm-accent);
+      color: #fff;
+      width: 100%;
+      padding: 1.1rem 1.5rem;
+      font-size: var(--font-size-lg);
+    }
+
+    .btn-primary:hover {
+      background: #7a91bc;
+    }
+
+    .btn-crisis {
+      background: var(--crisis-accent);
+      color: #fff;
+      width: 100%;
+      padding: 1.1rem 1.5rem;
+      font-size: var(--font-size-lg);
+    }
+
+    .btn-crisis:hover {
+      background: #5a8a7d;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid rgba(138, 146, 168, 0.3);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(138, 146, 168, 0.1);
+    }
+
+    .btn-text {
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-text:hover {
+      color: var(--text-primary);
+      background: rgba(138, 146, 168, 0.1);
+    }
+
+    .btn-danger {
+      background: rgba(122, 74, 74, 0.25);
+      color: #cc8888;
+      border: 1px solid rgba(122, 74, 74, 0.5);
+    }
+
+    .btn-danger:hover {
+      background: rgba(122, 74, 74, 0.4);
+    }
+
+    .btn-back {
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      padding: 0.5rem;
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      font-family: inherit;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .btn-back:hover,
+    .btn-back:focus-visible {
+      color: var(--text-primary);
+      background: rgba(138, 146, 168, 0.1);
+      outline: 2px solid var(--text-secondary);
+      outline-offset: 2px;
+    }
+
+    /* =====================================================
+       CARDS
+    ===================================================== */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    /* =====================================================
+       LAYOUT UTILITIES
+    ===================================================== */
+    .container {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    .flex-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gap-sm { gap: 0.5rem; }
+    .gap-md { gap: 1rem; }
+    .gap-lg { gap: 1.5rem; }
+
+    .text-center { text-align: center; }
+    .text-secondary { color: var(--text-secondary); }
+
+    .mt-auto { margin-top: auto; }
+    .mb-sm { margin-bottom: 0.5rem; }
+    .mb-md { margin-bottom: 1rem; }
+    .mb-lg { margin-bottom: 1.5rem; }
+
+    h1 { font-size: var(--font-size-2xl); font-weight: 600; line-height: 1.3; }
+    h2 { font-size: var(--font-size-xl); font-weight: 600; line-height: 1.35; }
+    h3 { font-size: var(--font-size-lg); font-weight: 500; }
+
+    p { margin-bottom: 0.75rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* =====================================================
+       SCREEN: ENTRY
+    ===================================================== */
+    #screen-entry {
+      background: var(--bg-dark);
+      align-items: stretch;
+    }
+
+    .entry-inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 1;
+      padding: 2.5rem 1.5rem 2rem;
+      max-width: 420px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .entry-title {
+      font-size: var(--font-size-2xl);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .entry-subtitle {
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      margin-bottom: 2.5rem;
+      line-height: 1.6;
+    }
+
+    .entry-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .entry-footer {
+      text-align: center;
+      padding: 1rem 1.5rem;
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      border-top: 1px solid rgba(138, 146, 168, 0.1);
+    }
+
+    /* =====================================================
+       CRISIS ZONE SCREENS
+    ===================================================== */
+    .crisis-bg {
+      background: #151820;
+    }
+
+    /* C0 — Landing */
+    #screen-crisis-landing {
+      background: #151820;
+    }
+
+    .crisis-landing-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+      max-width: 420px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .crisis-orb-preview {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--orb-color);
+      box-shadow: 0 0 30px var(--orb-glow);
+      margin: 0 auto 2rem;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .crisis-orb-preview {
+        animation: orb-idle 3s ease-in-out infinite;
+      }
+    }
+
+    @keyframes orb-idle {
+      0%, 100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.08); opacity: 1; }
+    }
+
+    .crisis-message {
+      font-size: var(--font-size-xl);
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+      font-weight: 400;
+    }
+
+    .crisis-submessage {
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      margin-bottom: 2.5rem;
+    }
+
+    .crisis-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .crisis-exit-note {
+      margin-top: auto;
+      padding: 1.25rem;
+      text-align: center;
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* C1 — Breathing orb */
+    #screen-crisis-breathing {
+      background: #151820;
+    }
+
+    .breathing-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 4rem 1.5rem 2rem;
+      text-align: center;
+    }
+
+    .orb-wrapper {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .orb {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(107, 127, 168, 0.5), rgba(90, 107, 140, 0.2));
+      box-shadow: 0 0 40px var(--orb-glow), 0 0 80px rgba(90, 107, 140, 0.08);
+      transform: scale(var(--orb-scale, 1));
+      transition: transform linear;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orb-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .orb-reduced {
+      /* Shown when prefers-reduced-motion */
+      display: none;
+      font-size: var(--font-size-lg);
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .orb {
+        animation: none !important;
+        transform: scale(1) !important;
+        transition: none !important;
+      }
+      .orb-reduced {
+        display: block;
+      }
+    }
+
+    .breathing-rhythm-info {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .rhythm-selector {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      justify-content: center;
+    }
+
+    .rhythm-btn {
+      background: transparent;
+      border: 1px solid rgba(138, 146, 168, 0.3);
+      color: var(--text-secondary);
+      border-radius: 2rem;
+      padding: 0.35rem 0.85rem;
+      font-size: var(--font-size-sm);
+      font-family: inherit;
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition), color var(--transition);
+    }
+
+    .rhythm-btn.active {
+      border-color: var(--accent);
+      color: var(--text-primary);
+      background: rgba(90, 107, 140, 0.2);
+    }
+
+    .rhythm-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .breathing-stop {
+      margin-top: 1.5rem;
+    }
+
+    /* C2 — Quedarme aquí */
+    #screen-crisis-stay {
+      background: #131619;
+    }
+
+    .stay-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .stay-gradient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: #131619;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .stay-gradient {
+        background: linear-gradient(135deg, #131619, #1a1f2e, #131a1e, #141b1a);
+        background-size: 400% 400%;
+        animation: gradient-shift 18s ease infinite;
+      }
+    }
+
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      33% { background-position: 100% 0%; }
+      66% { background-position: 50% 100%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .stay-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .stay-message {
+      font-size: var(--font-size-xl);
+      color: var(--text-primary);
+      font-weight: 400;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .stay-submessage {
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+
+    /* C3 — Deep pressure */
+    #screen-crisis-pressure {
+      background: #151820;
+    }
+
+    .pressure-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+      max-width: 420px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .pressure-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      line-height: 1;
+    }
+
+    .pressure-title {
+      font-size: var(--font-size-xl);
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      font-weight: 400;
+    }
+
+    .pressure-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      width: 100%;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .pressure-option {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      text-align: left;
+      color: var(--text-primary);
+      font-size: var(--font-size-base);
+      border: 1px solid rgba(138, 146, 168, 0.1);
+      line-height: 1.5;
+    }
+
+    .pressure-option-icon {
+      font-size: 1.5rem;
+      margin-right: 0.75rem;
+    }
+
+    /* =====================================================
+       TOP NAV BAR (inside screens)
+    ===================================================== */
+    .screen-nav {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      min-height: 3.5rem;
+    }
+
+    .screen-nav-title {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin: 0 auto;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+    }
+
+    /* =====================================================
+       CALM ZONE
+    ===================================================== */
+    #screen-calm {
+      background: var(--bg-dark);
+    }
+
+    .calm-header {
+      padding: 3rem 1.5rem 1.5rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(138, 146, 168, 0.1);
+    }
+
+    .calm-header h1 {
+      font-size: var(--font-size-xl);
+      color: var(--text-primary);
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .calm-header p {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .calm-sections {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .calm-section {
+      border-bottom: 1px solid rgba(138, 146, 168, 0.08);
+      padding: 0;
+    }
+
+    .calm-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 1.25rem;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: var(--font-size-base);
+      font-weight: 500;
+      gap: 0.75rem;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .calm-section-header:hover,
+    .calm-section-header:focus-visible {
+      background: rgba(138, 146, 168, 0.05);
+      outline: none;
+    }
+
+    .calm-section-header:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+
+    .section-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .section-chevron {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      transition: transform var(--transition);
+      flex-shrink: 0;
+    }
+
+    .calm-section.open .section-chevron {
+      transform: rotate(180deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .section-chevron {
+        transition: none;
+      }
+    }
+
+    .calm-section-body {
+      display: none;
+      padding: 0 1.25rem 1.25rem;
+    }
+
+    .calm-section.open .calm-section-body {
+      display: block;
+    }
+
+    /* Section 1 — Psicoeducación */
+    .psico-text {
+      color: var(--text-primary);
+      line-height: 1.7;
+      font-size: var(--font-size-base);
+    }
+
+    .psico-callout {
+      background: rgba(74, 122, 93, 0.12);
+      border-left: 3px solid var(--green-safe);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 0.85rem 1rem;
+      margin: 1rem 0;
+      font-size: var(--font-size-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    /* Section 2 — Semáforo */
+    .semaphore {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .semaphore-item {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid rgba(138, 146, 168, 0.1);
+    }
+
+    .semaphore-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      font-size: var(--font-size-base);
+      font-weight: 500;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .semaphore-header:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+
+    .semaphore-dot {
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .sem-green { background: var(--green-safe); }
+    .sem-yellow { background: var(--yellow-caution); }
+    .sem-red { background: var(--red-alert); }
+
+    .semaphore-item.green .semaphore-header { color: #7ac894; }
+    .semaphore-item.yellow .semaphore-header { color: #c4a84a; }
+    .semaphore-item.red .semaphore-header { color: #c47a7a; }
+
+    .semaphore-body {
+      display: none;
+      padding: 0 1rem 1rem;
+    }
+
+    .semaphore-item.open .semaphore-body {
+      display: block;
+    }
+
+    .semaphore-item.green { background: rgba(74, 122, 90, 0.08); }
+    .semaphore-item.yellow { background: rgba(138, 120, 64, 0.08); }
+    .semaphore-item.red { background: rgba(122, 74, 74, 0.08); }
+
+    .semaphore-body p {
+      color: var(--text-primary);
+      font-size: var(--font-size-sm);
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .semaphore-body textarea {
+      width: 100%;
+      background: rgba(26, 29, 36, 0.6);
+      border: 1px solid rgba(138, 146, 168, 0.2);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: var(--font-size-sm);
+      padding: 0.65rem 0.85rem;
+      resize: vertical;
+      min-height: 4rem;
+      line-height: 1.6;
+      margin-top: 0.5rem;
+    }
+
+    .semaphore-body textarea:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 0;
+      border-color: var(--accent);
+    }
+
+    .semaphore-body textarea::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+
+    /* Section 3 — Caja herramientas */
+    .tools-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .tool-card {
+      background: rgba(138, 146, 168, 0.05);
+      border: 1px solid rgba(138, 146, 168, 0.12);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+
+    .tool-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tool-icon {
+      font-size: 1.3rem;
+    }
+
+    .tool-title {
+      font-size: var(--font-size-base);
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .tool-desc {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .tool-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(90, 107, 140, 0.2);
+      border: 1px solid rgba(90, 107, 140, 0.3);
+      color: var(--calm-accent);
+      border-radius: 2rem;
+      padding: 0.4rem 1rem;
+      font-size: var(--font-size-sm);
+      font-family: inherit;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .tool-action:hover {
+      background: rgba(90, 107, 140, 0.35);
+    }
+
+    .tool-action:focus-visible {
+      outline: 2px solid var(--calm-accent);
+      outline-offset: 2px;
+    }
+
+    .script-card {
+      background: rgba(138, 146, 168, 0.07);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      font-style: italic;
+      color: var(--text-primary);
+      font-size: var(--font-size-base);
+      line-height: 1.7;
+      border-left: 3px solid var(--calm-accent);
+      margin-top: 0.5rem;
+    }
+
+    /* Grounding exercise */
+    .grounding-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .grounding-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: rgba(138, 146, 168, 0.05);
+      border-radius: var(--radius-sm);
+    }
+
+    .grounding-num {
+      font-size: var(--font-size-lg);
+      font-weight: 700;
+      color: var(--calm-accent);
+      line-height: 1;
+      flex-shrink: 0;
+      min-width: 1.5rem;
+    }
+
+    .grounding-text {
+      font-size: var(--font-size-sm);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    /* Section 4 — Mi plan */
+    .plan-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .plan-field label {
+      display: block;
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin-bottom: 0.4rem;
+      line-height: 1.4;
+    }
+
+    .plan-field textarea {
+      width: 100%;
+      background: rgba(26, 29, 36, 0.6);
+      border: 1px solid rgba(138, 146, 168, 0.2);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: var(--font-size-sm);
+      padding: 0.7rem 0.85rem;
+      resize: vertical;
+      min-height: 3.5rem;
+      line-height: 1.6;
+    }
+
+    .plan-field textarea:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 0;
+      border-color: var(--accent);
+    }
+
+    .plan-field textarea::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+
+    .plan-save-note {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* Section 5 — Practicar */
+    .practice-log {
+      margin-top: 0.75rem;
+    }
+
+    .practice-log-title {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .practice-entries {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      max-height: 10rem;
+      overflow-y: auto;
+      margin-bottom: 0.75rem;
+    }
+
+    .practice-entry {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      padding: 0.35rem 0.5rem;
+      background: rgba(138, 146, 168, 0.06);
+      border-radius: var(--radius-sm);
+    }
+
+    .practice-entry-note {
+      color: var(--text-primary);
+    }
+
+    /* =====================================================
+       SCREEN: BREATHING (Calm zone)
+    ===================================================== */
+    #screen-calm-breathing {
+      background: var(--bg-dark);
+    }
+
+    /* =====================================================
+       SCREEN: GROUNDING
+    ===================================================== */
+    #screen-grounding {
+      background: var(--bg-dark);
+    }
+
+    .grounding-fullscreen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .grounding-step-display {
+      margin-bottom: 2rem;
+    }
+
+    .grounding-big-num {
+      font-size: 4rem;
+      font-weight: 700;
+      color: var(--calm-accent);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .grounding-big-label {
+      font-size: var(--font-size-lg);
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .grounding-big-desc {
+      font-size: var(--font-size-base);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .grounding-progress {
+      display: flex;
+      gap: 0.4rem;
+      margin: 1.5rem 0;
+    }
+
+    .grounding-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: rgba(138, 146, 168, 0.25);
+      transition: background var(--transition);
+    }
+
+    .grounding-dot.done {
+      background: var(--calm-accent);
+    }
+
+    /* =====================================================
+       SETTINGS PANEL (modal overlay)
+    ===================================================== */
+    #settings-panel {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(0, 0, 0, 0.7);
+      align-items: flex-end;
+      backdrop-filter: blur(4px);
+    }
+
+    #settings-panel.open {
+      display: flex;
+    }
+
+    .settings-sheet {
+      background: var(--bg-card);
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .settings-sheet h2 {
+      font-size: var(--font-size-lg);
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(138, 146, 168, 0.1);
+    }
+
+    .settings-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .settings-label {
+      font-size: var(--font-size-base);
+      color: var(--text-primary);
+    }
+
+    .settings-sublabel {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin-top: 0.15rem;
+    }
+
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 3rem;
+      height: 1.65rem;
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: rgba(138, 146, 168, 0.25);
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      height: 1.25rem;
+      width: 1.25rem;
+      left: 0.2rem;
+      bottom: 0.2rem;
+      background: var(--text-secondary);
+      border-radius: 50%;
+      transition: transform var(--transition), background var(--transition);
+    }
+
+    .toggle input:checked + .toggle-slider {
+      background: var(--calm-accent);
+    }
+
+    .toggle input:checked + .toggle-slider::before {
+      transform: translateX(1.35rem);
+      background: #fff;
+    }
+
+    .toggle input:focus-visible + .toggle-slider {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .toggle-slider,
+      .toggle-slider::before {
+        transition: none;
+      }
+    }
+
+    .settings-disclaimer {
+      margin-top: 1rem;
+      padding: 0.85rem;
+      background: rgba(138, 146, 168, 0.08);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .settings-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    /* =====================================================
+       CONFIRM DIALOG
+    ===================================================== */
+    #confirm-dialog {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 20000;
+      background: rgba(0, 0, 0, 0.8);
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    #confirm-dialog.open {
+      display: flex;
+    }
+
+    .confirm-box {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+
+    .confirm-box h3 {
+      font-size: var(--font-size-lg);
+      margin-bottom: 0.75rem;
+    }
+
+    .confirm-box p {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+      margin-bottom: 1.25rem;
+    }
+
+    .confirm-buttons {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .confirm-buttons button {
+      flex: 1;
+    }
+
+    /* =====================================================
+       TOAST NOTIFICATION
+    ===================================================== */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(1rem);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid rgba(138, 146, 168, 0.2);
+      border-radius: 2rem;
+      padding: 0.65rem 1.25rem;
+      font-size: var(--font-size-sm);
+      z-index: 30000;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #toast {
+        transition: opacity 0.15s ease;
+        transform: translateX(-50%);
+      }
+    }
+
+    /* =====================================================
+       FULL BREATHING SCREEN (shared component)
+    ===================================================== */
+    .full-breathing-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    /* =====================================================
+       ACCESSIBILITY: FOCUS RING
+    ===================================================== */
+    :focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Remove default focus for mouse users */
+    :focus:not(:focus-visible) {
+      outline: none;
+    }
+
+    /* =====================================================
+       RESPONSIVE / LARGE SCREENS
+    ===================================================== */
+    @media (min-width: 480px) {
+      .container {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (min-width: 640px) {
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #0f1117;
+      }
+
+      .screen {
+        max-width: 480px;
+        width: 100%;
+        margin: 0 auto;
+        box-shadow: 0 0 60px rgba(0,0,0,0.5);
+        min-height: 100dvh;
+        min-height: 100vh;
+      }
+
+      #crisis-persistent-btn {
+        right: calc(50% - 220px);
+      }
+
+      #settings-btn {
+        left: calc(50% - 240px);
+      }
+    }
+
+    /* =====================================================
+       SCROLLBAR STYLING
+    ===================================================== */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(138, 146, 168, 0.25);
+      border-radius: 2px;
+    }
+
+    /* =====================================================
+       SECTION TITLE IN CALM HEADER
+    ===================================================== */
+    .section-title-inline {
+      flex: 1;
+      text-align: left;
+    }
+
+    /* small spacer at bottom of calm sections */
+    .calm-bottom-spacer {
+      height: 4rem;
+    }
+
+    /* Save indicator */
+    .save-indicator {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      margin-top: 0.35rem;
+      display: inline-block;
+    }
+
+    .save-indicator.visible {
+      opacity: 1;
+    }
+
+    /* practice log clear */
+    .log-clear-btn {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: underline;
+      padding: 0;
+      margin-top: 0.25rem;
+    }
+
+    .log-clear-btn:hover { color: var(--text-primary); }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       PERSISTENT UI (overlays all screens)
+  ============================================================ -->
+  <button id="settings-btn" aria-label="Configuración" title="Configuración">⚙</button>
+
+  <button id="crisis-persistent-btn" aria-label="Ir a zona de crisis">
+    Necesito ayuda ahora
+  </button>
+
+  <!-- Toast notification -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ============================================================
+       SCREEN: ENTRY
+  ============================================================ -->
+  <section id="screen-entry" class="screen active" role="main" aria-label="Pantalla de inicio">
+    <div class="entry-inner">
+      <h1 class="entry-title">Mi espacio de calma</h1>
+      <p class="entry-subtitle">Aquí puedes practicar o buscar alivio cuando lo necesitas.</p>
+
+      <div class="entry-buttons" role="group" aria-label="¿Qué necesitas ahora?">
+        <button class="btn btn-primary" onclick="navigateTo('calm')" aria-label="Ir a la zona de calma para practicar">
+          Quiero practicar
+        </button>
+        <button class="btn btn-crisis" onclick="navigateTo('crisis-landing')" aria-label="Ir a la zona de crisis para recibir apoyo ahora">
+          Me siento mal ahora
+        </button>
+      </div>
+    </div>
+
+    <footer class="entry-footer">
+      <small>Sin cuentas. Sin datos externos. Todo queda en tu dispositivo.</small>
+    </footer>
+  </section>
+
+  <!-- ============================================================
+       SCREEN: CRISIS LANDING (C0)
+  ============================================================ -->
+  <section id="screen-crisis-landing" class="screen" role="main" aria-label="Zona de crisis">
+    <nav class="screen-nav">
+      <button class="btn-back" onclick="navigateTo('entry')" aria-label="Volver al inicio">
+        ← salir
+      </button>
+      <span class="screen-nav-title">tu espacio</span>
+    </nav>
+
+    <div class="crisis-landing-inner">
+      <div class="crisis-orb-preview" aria-hidden="true"></div>
+
+      <p class="crisis-message">Estás en tu espacio.</p>
+      <p class="crisis-submessage">No tienes que hacer nada.</p>
+
+      <div class="crisis-actions" role="group" aria-label="Opciones opcionales">
+        <button class="btn btn-crisis" onclick="navigateTo('crisis-breathing')">
+          Respirar con el orbe
+        </button>
+        <button class="btn btn-ghost" onclick="navigateTo('crisis-pressure')">
+          Presión profunda
+        </button>
+        <button class="btn btn-text" onclick="navigateTo('crisis-stay')">
+          Solo quedarme aquí
+        </button>
+      </div>
+    </div>
+
+    <p class="crisis-exit-note" aria-live="polite">
+      Cuando estés mejor, puedes cerrar.<br>Esto va a estar aquí siempre.
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SCREEN: CRISIS BREATHING (C1)
+  ============================================================ -->
+  <section id="screen-crisis-breathing" class="screen" role="main" aria-label="Respiración en zona de crisis">
+    <nav class="screen-nav">
+      <button class="btn-back" onclick="navigateTo('crisis-landing')" aria-label="Volver a zona de crisis">
+        ← volver
+      </button>
+      <span class="screen-nav-title">respiración</span>
+    </nav>
+
+    <div class="breathing-container">
+      <!-- Reduced motion alternative -->
+      <div class="orb-reduced" aria-live="polite" id="crisis-orb-text-cue">
+        <span id="crisis-breath-phase-text">inhala</span>
+      </div>
+
+      <div class="orb-wrapper" aria-hidden="true">
+        <div class="orb" id="crisis-orb"></div>
+        <div class="orb-label" id="crisis-orb-label">inhala</div>
+      </div>
+
+      <div class="rhythm-selector" role="group" aria-label="Ritmo de respiración">
+        <button class="rhythm-btn active" id="crisis-rhythm-4-6" onclick="setRhythm('crisis', '4-6')" aria-pressed="true">
+          4–6
+        </button>
+        <button class="rhythm-btn" id="crisis-rhythm-4-7-8" onclick="setRhythm('crisis', '4-7-8')" aria-pressed="false">
+          4–7–8
+        </button>
+      </div>
+
+      <p class="breathing-rhythm-info" id="crisis-rhythm-desc">Inhala 4 s · Exhala 6 s</p>
+
+      <button class="btn btn-text breathing-stop" onclick="stopBreathing('crisis'); navigateTo('crisis-landing')" aria-label="Detener la respiración y volver">
+        Detener
+      </button>
+
+      <p class="crisis-exit-note" style="margin-top: 1.5rem;">
+        Cuando estés mejor, puedes cerrar.<br>Esto va a estar aquí siempre.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN: CRISIS STAY (C2)
+  ============================================================ -->
+  <section id="screen-crisis-stay" class="screen" role="main" aria-label="Quedarse aquí en zona de crisis">
+    <div class="stay-gradient" aria-hidden="true"></div>
+
+    <nav class="screen-nav" style="position: relative; z-index: 1;">
+      <button class="btn-back" onclick="navigateTo('crisis-landing')" aria-label="Volver a zona de crisis">
+        ← volver
+      </button>
+    </nav>
+
+    <div class="stay-inner">
+      <div class="stay-content">
+        <p class="stay-message">Quédate el tiempo que necesites.</p>
+        <p class="stay-submessage">Aquí nadie te va a apurar.</p>
+        <button class="btn btn-ghost" style="width: auto;" onclick="navigateTo('crisis-landing')" aria-label="Volver a opciones">
+          Volver a opciones
+        </button>
+      </div>
+    </div>
+
+    <p class="crisis-exit-note" style="position: relative; z-index: 1;">
+      Cuando estés mejor, puedes cerrar.<br>Esto va a estar aquí siempre.
+    </p>
+  </section>
+
+  <!-- ============================================================
+       SCREEN: CRISIS DEEP PRESSURE (C3)
+  ============================================================ -->
+  <section id="screen-crisis-pressure" class="screen" role="main" aria-label="Presión profunda en zona de crisis">
+    <nav class="screen-nav">
+      <button class="btn-back" onclick="navigateTo('crisis-landing')" aria-label="Volver a zona de crisis">
+        ← volver
+      </button>
+      <span class="screen-nav-title">presión profunda</span>
+    </nav>
+
+    <div class="pressure-inner">
+      <div class="pressure-icon" aria-hidden="true">🤝</div>
+      <p class="pressure-title">Aprieta algo fuerte.</p>
+
+      <div class="pressure-options" role="list" aria-label="Ideas para presión profunda">
+        <div class="pressure-option" role="listitem">
+          <span class="pressure-option-icon" aria-hidden="true">✊</span>
+          Aprieta un objeto blando o una almohada
+        </div>
+        <div class="pressure-option" role="listitem">
+          <span class="pressure-option-icon" aria-hidden="true">🧥</span>
+          Envuélvete en una manta o ropa pesada
+        </div>
+        <div class="pressure-option" role="listitem">
+          <span class="pressure-option-icon" aria-hidden="true">💪</span>
+          Cruza los brazos fuerte sobre el pecho
+        </div>
+        <div class="pressure-option" role="listitem">
+          <span class="pressure-option-icon" aria-hidden="true">🦶</span>
+          Apoya fuerte los pies en el suelo
+        </div>
+      </div>
+
+      <button class="btn btn-text" onclick="navigateTo('crisis-landing')">
+        Volver
+      </button>
+
+      <p class="crisis-exit-note">
+        Cuando estés mejor, puedes cerrar.<br>Esto va a estar aquí siempre.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN: CALM ZONE
+  ============================================================ -->
+  <section id="screen-calm" class="screen" role="main" aria-label="Zona de calma">
+    <header class="calm-header">
+      <nav style="margin-bottom: 0.75rem; display: flex; justify-content: flex-start;">
+        <button class="btn-back" onclick="navigateTo('entry')" aria-label="Volver al inicio">
+          ← inicio
+        </button>
+      </nav>
+      <h1>Zona calma</h1>
+      <p>Para explorar y practicar cuando estás bien</p>
+    </header>
+
+    <div class="calm-sections" role="list">
+
+      <!-- SECTION 1: Psicoeducación -->
+      <div class="calm-section" role="listitem">
+        <button class="calm-section-header" onclick="toggleSection('psico')" aria-expanded="false" aria-controls="section-psico" id="header-psico">
+          <span class="section-icon" aria-hidden="true">🧠</span>
+          <span class="section-title-inline">Qué me pasa cuando me sobrepaso</span>
+          <span class="section-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div class="calm-section-body" id="section-psico" role="region" aria-labelledby="header-psico">
+          <div class="psico-text">
+            <p>A veces mi sistema nervioso se activa antes de que yo me dé cuenta. El ruido, la gente, las exigencias… se acumulan. No es que yo "me ponga difícil". Mi cerebro está haciendo lo que puede con demasiada información.</p>
+
+            <p>Cuando me sobrepaso, puedo sentir cosas como:</p>
+            <ul style="margin-left: 1.25rem; margin-bottom: 0.75rem; color: var(--text-primary); line-height: 1.8;">
+              <li>tensión en el cuerpo o mandíbula</li>
+              <li>ganas de escapar o taparme los oídos</li>
+              <li>dificultad para hablar o pensar</li>
+              <li>irritación o ganas de llorar sin saber bien por qué</li>
+            </ul>
+
+            <div class="psico-callout" role="note">
+              <strong>Alejarme no es huir — es una estrategia válida.</strong><br>
+              Retirarme cuando me sobrepaso me permite recuperarme más rápido. Es una buena decisión, no una debilidad.
+            </div>
+
+            <p>Cuanto antes noto las señales, más fácil es regular. Por eso conocer mis señales en verde y amarillo me ayuda a actuar antes del rojo.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: Semáforo -->
+      <div class="calm-section" role="listitem">
+        <button class="calm-section-header" onclick="toggleSection('semaforo')" aria-expanded="false" aria-controls="section-semaforo" id="header-semaforo">
+          <span class="section-icon" aria-hidden="true">🚦</span>
+          <span class="section-title-inline">Mi semáforo de señales</span>
+          <span class="section-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div class="calm-section-body" id="section-semaforo" role="region" aria-labelledby="header-semaforo">
+          <div class="semaphore" role="list">
+
+            <!-- Green -->
+            <div class="semaphore-item green" role="listitem">
+              <button class="semaphore-header" onclick="toggleSemaphore('green')" aria-expanded="false" aria-controls="sem-green-body" id="sem-green-header">
+                <span class="semaphore-dot sem-green" aria-hidden="true"></span>
+                Estoy bien
+                <span class="section-chevron" aria-hidden="true" style="margin-left: auto;">▼</span>
+              </button>
+              <div class="semaphore-body" id="sem-green-body" role="region" aria-labelledby="sem-green-header">
+                <p>Cuando estoy en verde, me siento más o menos a gusto. Puedo interactuar, concentrarme, hacer cosas.</p>
+                <p>¿Cómo sé que estoy en verde? Escribe tus propias señales:</p>
+                <textarea
+                  id="sem-green-notes"
+                  placeholder="Ej: mi cuerpo está suelto, puedo hablar con facilidad, no me molesta el ruido..."
+                  aria-label="Mis señales de que estoy bien"
+                  oninput="saveToStorage('sem-green', this.value)"
+                  rows="3"
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Yellow -->
+            <div class="semaphore-item yellow" role="listitem">
+              <button class="semaphore-header" onclick="toggleSemaphore('yellow')" aria-expanded="false" aria-controls="sem-yellow-body" id="sem-yellow-header">
+                <span class="semaphore-dot sem-yellow" aria-hidden="true"></span>
+                Empiezo a necesitar mi espacio
+                <span class="section-chevron" aria-hidden="true" style="margin-left: auto;">▼</span>
+              </button>
+              <div class="semaphore-body" id="sem-yellow-body" role="region" aria-labelledby="sem-yellow-header">
+                <p>Cuando noto las señales amarillas, <strong>actúo ahora</strong> — antes de llegar al rojo.</p>
+                <p>¿Cómo sé que entro en amarillo?</p>
+                <textarea
+                  id="sem-yellow-notes"
+                  placeholder="Ej: empiezo a irritarme más, el ruido me molesta más, quiero que todos se callen..."
+                  aria-label="Mis señales de alarma temprana"
+                  oninput="saveToStorage('sem-yellow', this.value)"
+                  rows="3"
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Red -->
+            <div class="semaphore-item red" role="listitem">
+              <button class="semaphore-header" onclick="toggleSemaphore('red')" aria-expanded="false" aria-controls="sem-red-body" id="sem-red-header">
+                <span class="semaphore-dot sem-red" aria-hidden="true"></span>
+                Ya estoy sobrepasado — me retiro
+                <span class="section-chevron" aria-hidden="true" style="margin-left: auto;">▼</span>
+              </button>
+              <div class="semaphore-body" id="sem-red-body" role="region" aria-labelledby="sem-red-header">
+                <p>Cuando llegué al rojo, no tengo que justificarme. Me retiro, sin más.</p>
+                <p>¿Cómo se ve el rojo para mí?</p>
+                <textarea
+                  id="sem-red-notes"
+                  placeholder="Ej: no puedo hablar, me siento atrapado, quiero salir corriendo..."
+                  aria-label="Mis señales de sobrecarga máxima"
+                  oninput="saveToStorage('sem-red', this.value)"
+                  rows="3"
+                ></textarea>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: Caja de herramientas -->
+      <div class="calm-section" role="listitem">
+        <button class="calm-section-header" onclick="toggleSection('herramientas')" aria-expanded="false" aria-controls="section-herramientas" id="header-herramientas">
+          <span class="section-icon" aria-hidden="true">🧰</span>
+          <span class="section-title-inline">Mi caja de herramientas</span>
+          <span class="section-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div class="calm-section-body" id="section-herramientas" role="region" aria-labelledby="header-herramientas">
+          <div class="tools-grid">
+
+            <!-- Tool: Breathing -->
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-icon" aria-hidden="true">🫁</span>
+                <span class="tool-title">Respiración con exhale largo</span>
+              </div>
+              <p class="tool-desc">Exhalar más tiempo que inhalar activa el sistema de calma del cuerpo. El mismo orbe que hay en la zona crisis.</p>
+              <button class="tool-action" onclick="navigateTo('calm-breathing')" aria-label="Practicar respiración">
+                Practicar →
+              </button>
+            </div>
+
+            <!-- Tool: Deep pressure -->
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-icon" aria-hidden="true">🤝</span>
+                <span class="tool-title">Presión profunda y propiocepción</span>
+              </div>
+              <p class="tool-desc">Dar presión al cuerpo — apretar, envolverte, apoyar los pies fuerte — ayuda al sistema nervioso a sentirse más ubicado.</p>
+              <div style="margin-top: 0.5rem;">
+                <div class="grounding-step" style="margin-bottom: 0.4rem;">
+                  <span style="font-size: 1.1rem;">✊</span>
+                  <span class="grounding-text">Aprieta un objeto con ambas manos</span>
+                </div>
+                <div class="grounding-step" style="margin-bottom: 0.4rem;">
+                  <span style="font-size: 1.1rem;">🧥</span>
+                  <span class="grounding-text">Envuélvete en una manta con presión</span>
+                </div>
+                <div class="grounding-step">
+                  <span style="font-size: 1.1rem;">🦶</span>
+                  <span class="grounding-text">Pisa fuerte, nota el suelo bajo tus pies</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tool: Retiro bien hecho -->
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-icon" aria-hidden="true">🚪</span>
+                <span class="tool-title">Mi retiro, bien hecho</span>
+              </div>
+              <p class="tool-desc">Una frase para comunicar que necesitas espacio sin tener que explicar demasiado:</p>
+              <div class="script-card" role="blockquote" aria-label="Script de retirada">
+                "Necesito estar solo un rato.<br>Vuelvo cuando esté mejor."
+              </div>
+            </div>
+
+            <!-- Tool: Grounding 5-4-3-2-1 -->
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-icon" aria-hidden="true">🌀</span>
+                <span class="tool-title">5-4-3-2-1 Anclaje sensorial</span>
+              </div>
+              <p class="tool-desc">Nombrar lo que percibes ayuda al cerebro a volver al presente. Para la ansiedad anticipatoria.</p>
+              <button class="tool-action" onclick="navigateTo('grounding')" aria-label="Hacer ejercicio de anclaje sensorial">
+                Empezar →
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: Mi plan -->
+      <div class="calm-section" role="listitem">
+        <button class="calm-section-header" onclick="toggleSection('plan')" aria-expanded="false" aria-controls="section-plan" id="header-plan">
+          <span class="section-icon" aria-hidden="true">📋</span>
+          <span class="section-title-inline">Mi plan</span>
+          <span class="section-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div class="calm-section-body" id="section-plan" role="region" aria-labelledby="header-plan">
+          <p style="color: var(--text-secondary); font-size: var(--font-size-sm); margin-bottom: 1rem; line-height: 1.6;">
+            Escribe tu propio plan con tus palabras. Se guarda automáticamente.
+          </p>
+          <div class="plan-form">
+            <div class="plan-field">
+              <label for="plan-signal">Cuando noto que empiezo a necesitar mi espacio, veo/siento:</label>
+              <textarea
+                id="plan-signal"
+                placeholder=""
+                aria-label="Mis señales de alarma personal"
+                oninput="saveToStorage('plan-signal', this.value)"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="plan-field">
+              <label for="plan-first">Lo primero que hago es:</label>
+              <textarea
+                id="plan-first"
+                placeholder=""
+                aria-label="Mi primera acción"
+                oninput="saveToStorage('plan-first', this.value)"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="plan-field">
+              <label for="plan-place">Mi lugar seguro para retirarme es:</label>
+              <textarea
+                id="plan-place"
+                placeholder=""
+                aria-label="Mi lugar de retiro"
+                oninput="saveToStorage('plan-place', this.value)"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="plan-field">
+              <label for="plan-tools">Las herramientas que me ayudan:</label>
+              <textarea
+                id="plan-tools"
+                placeholder=""
+                aria-label="Mis herramientas personales"
+                oninput="saveToStorage('plan-tools', this.value)"
+                rows="2"
+              ></textarea>
+            </div>
+            <div class="plan-field">
+              <label for="plan-back">Sé que estoy mejor cuando:</label>
+              <textarea
+                id="plan-back"
+                placeholder=""
+                aria-label="Señales de que me recuperé"
+                oninput="saveToStorage('plan-back', this.value)"
+                rows="2"
+              ></textarea>
+            </div>
+            <p class="plan-save-note">Guardado automáticamente en este dispositivo.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 5: Practicar -->
+      <div class="calm-section" role="listitem">
+        <button class="calm-section-header" onclick="toggleSection('practicar')" aria-expanded="false" aria-controls="section-practicar" id="header-practicar">
+          <span class="section-icon" aria-hidden="true">🔄</span>
+          <span class="section-title-inline">Practicar</span>
+          <span class="section-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div class="calm-section-body" id="section-practicar" role="region" aria-labelledby="header-practicar">
+          <p style="color: var(--text-secondary); font-size: var(--font-size-sm); margin-bottom: 1rem; line-height: 1.6;">
+            Practicar las herramientas cuando estás bien las hace más fáciles de usar cuando lo necesitas.
+          </p>
+
+          <div class="tools-grid">
+            <button class="tool-action" onclick="navigateTo('calm-breathing')" style="width: 100%; justify-content: flex-start; padding: 0.75rem 1rem; border-radius: var(--radius-sm);">
+              🫁 Practicar respiración
+            </button>
+            <button class="tool-action" onclick="navigateTo('grounding')" style="width: 100%; justify-content: flex-start; padding: 0.75rem 1rem; border-radius: var(--radius-sm);">
+              🌀 Practicar anclaje 5-4-3-2-1
+            </button>
+          </div>
+
+          <div class="practice-log" style="margin-top: 1.25rem;">
+            <p class="practice-log-title">Registro opcional — sin rachas, sin puntos</p>
+            <div class="practice-entries" id="practice-entries" aria-live="polite" aria-label="Entradas del registro de práctica"></div>
+            <button class="btn btn-ghost" onclick="logPractice()" style="width: 100%; margin-bottom: 0.5rem;">
+              Lo practiqué hoy
+            </button>
+            <button class="log-clear-btn" onclick="clearPracticeLog()" aria-label="Borrar el registro de práctica">
+              borrar registro
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="calm-bottom-spacer" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN: CALM BREATHING (shared orb, calm zone)
+  ============================================================ -->
+  <section id="screen-calm-breathing" class="screen" role="main" aria-label="Respiración en zona calma">
+    <nav class="screen-nav">
+      <button class="btn-back" onclick="stopBreathing('calm'); navigateTo('calm')" aria-label="Volver a zona calma">
+        ← volver
+      </button>
+      <span class="screen-nav-title">respiración</span>
+    </nav>
+
+    <div class="full-breathing-wrapper">
+      <!-- Reduced motion alternative -->
+      <div class="orb-reduced" id="calm-orb-text-cue">
+        <span id="calm-breath-phase-text">inhala</span>
+      </div>
+
+      <div class="orb-wrapper" aria-hidden="true">
+        <div class="orb" id="calm-orb"></div>
+        <div class="orb-label" id="calm-orb-label">inhala</div>
+      </div>
+
+      <div class="rhythm-selector" role="group" aria-label="Ritmo de respiración">
+        <button class="rhythm-btn active" id="calm-rhythm-4-6" onclick="setRhythm('calm', '4-6')" aria-pressed="true">
+          4–6
+        </button>
+        <button class="rhythm-btn" id="calm-rhythm-4-7-8" onclick="setRhythm('calm', '4-7-8')" aria-pressed="false">
+          4–7–8
+        </button>
+      </div>
+
+      <p class="breathing-rhythm-info" id="calm-rhythm-desc">Inhala 4 s · Exhala 6 s</p>
+
+      <button class="btn btn-text breathing-stop" onclick="stopBreathing('calm'); navigateTo('calm')" aria-label="Detener la respiración y volver">
+        Detener
+      </button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN: GROUNDING 5-4-3-2-1
+  ============================================================ -->
+  <section id="screen-grounding" class="screen" role="main" aria-label="Ejercicio de anclaje sensorial 5-4-3-2-1">
+    <nav class="screen-nav">
+      <button class="btn-back" onclick="stopGrounding(); navigateTo('calm')" aria-label="Salir del ejercicio">
+        ← salir
+      </button>
+      <span class="screen-nav-title">anclaje sensorial</span>
+    </nav>
+
+    <div class="grounding-fullscreen">
+      <div class="grounding-step-display">
+        <div class="grounding-big-num" id="grounding-num" aria-live="polite">5</div>
+        <div class="grounding-big-label" id="grounding-sense" aria-live="polite">cosas que VES</div>
+        <div class="grounding-big-desc" id="grounding-inst" aria-live="polite">
+          Mira a tu alrededor. Nombra 5 cosas que puedas ver ahora mismo.
+        </div>
+      </div>
+
+      <div class="grounding-progress" role="list" aria-label="Progreso del ejercicio">
+        <div class="grounding-dot done" role="listitem" aria-label="paso 1 completado"></div>
+        <div class="grounding-dot" role="listitem" aria-label="paso 2"></div>
+        <div class="grounding-dot" role="listitem" aria-label="paso 3"></div>
+        <div class="grounding-dot" role="listitem" aria-label="paso 4"></div>
+        <div class="grounding-dot" role="listitem" aria-label="paso 5"></div>
+      </div>
+
+      <button class="btn btn-primary" id="grounding-next-btn" onclick="groundingNext()" aria-label="Siguiente paso del ejercicio">
+        Siguiente →
+      </button>
+
+      <button class="btn btn-text" style="margin-top: 0.75rem;" onclick="stopGrounding(); navigateTo('calm')" aria-label="Salir del ejercicio">
+        Salir
+      </button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SETTINGS PANEL
+  ============================================================ -->
+  <div id="settings-panel" role="dialog" aria-modal="true" aria-label="Configuración" onclick="closeSettingsOnBackdrop(event)">
+    <div class="settings-sheet">
+      <h2>Configuración</h2>
+
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Alto contraste</div>
+          <div class="settings-sublabel">Aumenta el contraste de texto</div>
+        </div>
+        <label class="toggle" aria-label="Activar alto contraste">
+          <input type="checkbox" id="toggle-contrast" onchange="toggleHighContrast(this.checked)" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="settings-row">
+        <div>
+          <div class="settings-label">Texto grande</div>
+          <div class="settings-sublabel">Aumenta el tamaño del texto</div>
+        </div>
+        <label class="toggle" aria-label="Activar texto grande">
+          <input type="checkbox" id="toggle-large-text" onchange="toggleLargeText(this.checked)" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="settings-disclaimer" role="note">
+        Esta herramienta complementa, no reemplaza, el acompañamiento profesional.
+      </div>
+
+      <div class="settings-actions">
+        <button class="btn btn-danger" onclick="confirmDeleteData()" aria-label="Borrar todos mis datos guardados">
+          Borrar todos mis datos
+        </button>
+        <button class="btn btn-ghost" onclick="closeSettings()" aria-label="Cerrar configuración">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CONFIRM DIALOG
+  ============================================================ -->
+  <div id="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-desc">
+    <div class="confirm-box">
+      <h3 id="confirm-title">¿Borrar todos los datos?</h3>
+      <p id="confirm-desc">Se eliminarán tus notas del semáforo, tu plan y el registro de práctica. Esta acción no se puede deshacer.</p>
+      <div class="confirm-buttons">
+        <button class="btn btn-ghost" onclick="closeConfirm()" aria-label="Cancelar, no borrar datos">
+          Cancelar
+        </button>
+        <button class="btn btn-danger" onclick="deleteAllData()" aria-label="Confirmar borrado de datos">
+          Borrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    'use strict';
+
+    /* ===========================================================
+       CONSTANTS & STATE
+    =========================================================== */
+    const SCREENS = [
+      'entry',
+      'crisis-landing',
+      'crisis-breathing',
+      'crisis-stay',
+      'crisis-pressure',
+      'calm',
+      'calm-breathing',
+      'grounding'
+    ];
+
+    const CRISIS_SCREENS = new Set([
+      'crisis-landing',
+      'crisis-breathing',
+      'crisis-stay',
+      'crisis-pressure'
+    ]);
+
+    const GROUNDING_STEPS = [
+      {
+        num: '5',
+        sense: 'cosas que VES',
+        inst: 'Mira a tu alrededor. Nombra 5 cosas que puedas ver ahora mismo.'
+      },
+      {
+        num: '4',
+        sense: 'cosas que TOCAS',
+        inst: 'Nota 4 texturas o superficies que puedas sentir con tu cuerpo.'
+      },
+      {
+        num: '3',
+        sense: 'cosas que ESCUCHAS',
+        inst: 'Escucha con atención. ¿Qué 3 sonidos puedes identificar?'
+      },
+      {
+        num: '2',
+        sense: 'cosas que HUELES',
+        inst: 'Inhala despacio. ¿Puedes percibir 2 aromas o notas de olor?'
+      },
+      {
+        num: '1',
+        sense: 'cosa que SABOREAS',
+        inst: 'Nota qué sabor hay en tu boca ahora mismo. Solo uno.'
+      }
+    ];
+
+    let currentScreen = 'entry';
+    let breathingTimers = { crisis: null, calm: null };
+    let breathingRhythms = { crisis: '4-6', calm: '4-6' };
+    let groundingStep = 0;
+    let prefersReducedMotion = false;
+
+    /* ===========================================================
+       INIT
+    =========================================================== */
+    document.addEventListener('DOMContentLoaded', function () {
+      // Detect reduced motion preference
+      const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      prefersReducedMotion = motionQuery.matches;
+      motionQuery.addEventListener('change', function (e) {
+        prefersReducedMotion = e.matches;
+      });
+
+      // Load settings
+      loadSettings();
+
+      // Load saved text areas
+      loadSavedData();
+
+      // Load practice log
+      renderPracticeLog();
+
+      // Navigate to entry screen
+      navigateTo('entry');
+    });
+
+    /* ===========================================================
+       NAVIGATION
+    =========================================================== */
+    function navigateTo(screenId) {
+      // Stop breathing if leaving a breathing screen
+      if (currentScreen === 'crisis-breathing') {
+        stopBreathing('crisis');
+      }
+      if (currentScreen === 'calm-breathing') {
+        stopBreathing('calm');
+      }
+      if (currentScreen === 'grounding') {
+        stopGrounding();
+      }
+
+      // Hide all screens
+      SCREENS.forEach(function (id) {
+        const el = document.getElementById('screen-' + id);
+        if (el) {
+          el.classList.remove('active');
+          el.setAttribute('aria-hidden', 'true');
+        }
+      });
+
+      // Show target screen
+      const target = document.getElementById('screen-' + screenId);
+      if (!target) return;
+      target.classList.add('active');
+      target.removeAttribute('aria-hidden');
+
+      currentScreen = screenId;
+
+      // Show/hide persistent buttons
+      const isEntry = screenId === 'entry';
+      const crisisBtn = document.getElementById('crisis-persistent-btn');
+      const settingsBtn = document.getElementById('settings-btn');
+
+      if (isEntry) {
+        crisisBtn.classList.remove('visible');
+        settingsBtn.classList.remove('visible');
+      } else {
+        settingsBtn.classList.add('visible');
+        // Crisis button: visible on non-crisis, non-entry screens
+        if (CRISIS_SCREENS.has(screenId)) {
+          crisisBtn.classList.remove('visible');
+        } else {
+          crisisBtn.classList.add('visible');
+        }
+      }
+
+      // Start screen-specific behavior
+      if (screenId === 'crisis-breathing') {
+        startBreathing('crisis');
+      } else if (screenId === 'calm-breathing') {
+        startBreathing('calm');
+      } else if (screenId === 'grounding') {
+        startGrounding();
+      }
+
+      // Focus management: move focus to screen top for a11y
+      target.setAttribute('tabindex', '-1');
+      target.focus({ preventScroll: false });
+    }
+
+    /* ===========================================================
+       BREATHING ORB
+    =========================================================== */
+    /*
+      4-6: inhale 4s, exhale 6s
+      4-7-8: inhale 4s, hold 7s, exhale 8s
+    */
+
+    const RHYTHMS = {
+      '4-6': {
+        phases: [
+          { label: 'inhala', duration: 4000, scale: 1.4 },
+          { label: 'exhala', duration: 6000, scale: 1.0 }
+        ],
+        desc: 'Inhala 4 s · Exhala 6 s'
+      },
+      '4-7-8': {
+        phases: [
+          { label: 'inhala', duration: 4000, scale: 1.4 },
+          { label: 'aguanta', duration: 7000, scale: 1.4 },
+          { label: 'exhala', duration: 8000, scale: 1.0 }
+        ],
+        desc: 'Inhala 4 s · Aguanta 7 s · Exhala 8 s'
+      }
+    };
+
+    function startBreathing(zone) {
+      stopBreathing(zone);
+
+      const orb = document.getElementById(zone + '-orb');
+      const label = document.getElementById(zone + '-orb-label');
+      const textCue = document.getElementById(zone + '-breath-phase-text');
+
+      if (!orb) return;
+
+      const rhythm = breathingRhythms[zone];
+      const phases = RHYTHMS[rhythm].phases;
+      let phaseIndex = 0;
+
+      function runPhase() {
+        const phase = phases[phaseIndex];
+
+        // Update label
+        if (label) label.textContent = phase.label;
+        if (textCue) textCue.textContent = phase.label;
+
+        // Animate orb
+        if (!prefersReducedMotion) {
+          orb.style.transition = 'transform ' + (phase.duration / 1000) + 's linear';
+          orb.style.setProperty('--orb-scale', phase.scale);
+          orb.style.transform = 'scale(' + phase.scale + ')';
+        }
+
+        // Schedule next phase
+        breathingTimers[zone] = setTimeout(function () {
+          phaseIndex = (phaseIndex + 1) % phases.length;
+          runPhase();
+        }, phase.duration);
+      }
+
+      runPhase();
+    }
+
+    function stopBreathing(zone) {
+      if (breathingTimers[zone]) {
+        clearTimeout(breathingTimers[zone]);
+        breathingTimers[zone] = null;
+      }
+
+      const orb = document.getElementById(zone + '-orb');
+      if (orb) {
+        orb.style.transition = 'transform 0.5s ease';
+        orb.style.transform = 'scale(1)';
+      }
+
+      const label = document.getElementById(zone + '-orb-label');
+      if (label) label.textContent = 'inhala';
+
+      const textCue = document.getElementById(zone + '-breath-phase-text');
+      if (textCue) textCue.textContent = 'inhala';
+    }
+
+    function setRhythm(zone, rhythmKey) {
+      breathingRhythms[zone] = rhythmKey;
+
+      // Update button states
+      const btn46 = document.getElementById(zone + '-rhythm-4-6');
+      const btn478 = document.getElementById(zone + '-rhythm-4-7-8');
+      const desc = document.getElementById(zone + '-rhythm-desc');
+
+      if (btn46) {
+        const is46 = rhythmKey === '4-6';
+        btn46.classList.toggle('active', is46);
+        btn46.setAttribute('aria-pressed', String(is46));
+      }
+      if (btn478) {
+        const is478 = rhythmKey === '4-7-8';
+        btn478.classList.toggle('active', is478);
+        btn478.setAttribute('aria-pressed', String(is478));
+      }
+      if (desc) {
+        desc.textContent = RHYTHMS[rhythmKey].desc;
+      }
+
+      // Restart breathing with new rhythm
+      if (breathingTimers[zone] !== null) {
+        startBreathing(zone);
+      }
+    }
+
+    /* ===========================================================
+       CALM ZONE — SECTION ACCORDION
+    =========================================================== */
+    function toggleSection(sectionId) {
+      const body = document.getElementById('section-' + sectionId);
+      const section = body ? body.closest('.calm-section') : null;
+      const header = document.getElementById('header-' + sectionId);
+
+      if (!section) return;
+
+      const isOpen = section.classList.contains('open');
+      section.classList.toggle('open', !isOpen);
+      if (header) header.setAttribute('aria-expanded', String(!isOpen));
+    }
+
+    /* ===========================================================
+       SEMAPHORE ACCORDION
+    =========================================================== */
+    function toggleSemaphore(color) {
+      const item = document.querySelector('.semaphore-item.' + color);
+      const header = document.getElementById('sem-' + color + '-header');
+
+      if (!item) return;
+
+      const isOpen = item.classList.contains('open');
+      item.classList.toggle('open', !isOpen);
+      if (header) header.setAttribute('aria-expanded', String(!isOpen));
+    }
+
+    /* ===========================================================
+       GROUNDING 5-4-3-2-1
+    =========================================================== */
+    function startGrounding() {
+      groundingStep = 0;
+      renderGroundingStep();
+    }
+
+    function stopGrounding() {
+      groundingStep = 0;
+    }
+
+    function groundingNext() {
+      const dots = document.querySelectorAll('.grounding-dot');
+
+      if (groundingStep < GROUNDING_STEPS.length - 1) {
+        groundingStep++;
+        renderGroundingStep();
+
+        // Mark dots
+        dots.forEach(function (dot, i) {
+          dot.classList.toggle('done', i <= groundingStep);
+        });
+      } else {
+        // Finished
+        document.getElementById('grounding-num').textContent = '✓';
+        document.getElementById('grounding-sense').textContent = 'Terminaste';
+        document.getElementById('grounding-inst').textContent = 'Bien hecho. Tu mente volvió al presente.';
+        document.getElementById('grounding-next-btn').textContent = 'Volver';
+        document.getElementById('grounding-next-btn').onclick = function () {
+          stopGrounding();
+          navigateTo('calm');
+        };
+
+        dots.forEach(function (dot) {
+          dot.classList.add('done');
+        });
+      }
+    }
+
+    function renderGroundingStep() {
+      const step = GROUNDING_STEPS[groundingStep];
+      if (!step) return;
+
+      document.getElementById('grounding-num').textContent = step.num;
+      document.getElementById('grounding-sense').textContent = step.sense;
+      document.getElementById('grounding-inst').textContent = step.inst;
+
+      // Reset button label and handler
+      const btn = document.getElementById('grounding-next-btn');
+      btn.textContent = groundingStep < GROUNDING_STEPS.length - 1 ? 'Siguiente →' : 'Terminar';
+      btn.onclick = groundingNext;
+
+      // Update dots
+      const dots = document.querySelectorAll('.grounding-dot');
+      dots.forEach(function (dot, i) {
+        dot.classList.toggle('done', i <= groundingStep);
+      });
+    }
+
+    /* ===========================================================
+       LOCAL STORAGE
+    =========================================================== */
+    const STORAGE_KEYS = [
+      'sem-green', 'sem-yellow', 'sem-red',
+      'plan-signal', 'plan-first', 'plan-place', 'plan-tools', 'plan-back',
+      'practice-log',
+      'settings-high-contrast', 'settings-large-text'
+    ];
+
+    function saveToStorage(key, value) {
+      try {
+        localStorage.setItem('calma-' + key, value);
+      } catch (e) {
+        // Ignore storage errors
+      }
+    }
+
+    function getFromStorage(key) {
+      try {
+        return localStorage.getItem('calma-' + key) || '';
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function loadSavedData() {
+      // Semaphore notes
+      const semFields = ['sem-green', 'sem-yellow', 'sem-red'];
+      semFields.forEach(function (key) {
+        const el = document.getElementById(key + '-notes');
+        if (el) el.value = getFromStorage(key);
+      });
+
+      // Plan fields
+      const planFields = ['plan-signal', 'plan-first', 'plan-place', 'plan-tools', 'plan-back'];
+      planFields.forEach(function (key) {
+        const el = document.getElementById(key);
+        if (el) el.value = getFromStorage(key);
+      });
+    }
+
+    /* ===========================================================
+       PRACTICE LOG
+    =========================================================== */
+    function getPracticeLog() {
+      try {
+        const raw = localStorage.getItem('calma-practice-log');
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function savePracticeLog(entries) {
+      try {
+        localStorage.setItem('calma-practice-log', JSON.stringify(entries));
+      } catch (e) {}
+    }
+
+    function logPractice() {
+      const entries = getPracticeLog();
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      entries.unshift({ date: dateStr });
+      // Keep last 20 entries only
+      if (entries.length > 20) entries.splice(20);
+      savePracticeLog(entries);
+      renderPracticeLog();
+      showToast('Registrado');
+    }
+
+    function clearPracticeLog() {
+      savePracticeLog([]);
+      renderPracticeLog();
+    }
+
+    function renderPracticeLog() {
+      const container = document.getElementById('practice-entries');
+      if (!container) return;
+
+      const entries = getPracticeLog();
+
+      if (entries.length === 0) {
+        container.innerHTML = '<div class="practice-entry" style="color: var(--text-secondary);">Sin entradas aún.</div>';
+        return;
+      }
+
+      container.innerHTML = entries.map(function (e) {
+        return '<div class="practice-entry"><span style="color: var(--text-secondary);">' + escapeHtml(e.date) + '</span></div>';
+      }).join('');
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /* ===========================================================
+       SETTINGS
+    =========================================================== */
+    function loadSettings() {
+      const highContrast = getFromStorage('settings-high-contrast') === 'true';
+      const largeText = getFromStorage('settings-large-text') === 'true';
+
+      const contrastToggle = document.getElementById('toggle-contrast');
+      const textToggle = document.getElementById('toggle-large-text');
+
+      if (contrastToggle) contrastToggle.checked = highContrast;
+      if (textToggle) textToggle.checked = largeText;
+
+      if (highContrast) document.body.classList.add('high-contrast');
+      if (largeText) document.body.classList.add('large-text');
+    }
+
+    function toggleHighContrast(enabled) {
+      document.body.classList.toggle('high-contrast', enabled);
+      saveToStorage('settings-high-contrast', String(enabled));
+    }
+
+    function toggleLargeText(enabled) {
+      document.body.classList.toggle('large-text', enabled);
+      saveToStorage('settings-large-text', String(enabled));
+    }
+
+    function openSettings() {
+      const panel = document.getElementById('settings-panel');
+      panel.classList.add('open');
+      panel.querySelector('.settings-sheet').focus();
+    }
+
+    function closeSettings() {
+      document.getElementById('settings-panel').classList.remove('open');
+    }
+
+    function closeSettingsOnBackdrop(event) {
+      if (event.target === document.getElementById('settings-panel')) {
+        closeSettings();
+      }
+    }
+
+    document.getElementById('settings-btn').addEventListener('click', openSettings);
+    document.getElementById('crisis-persistent-btn').addEventListener('click', function () {
+      navigateTo('crisis-landing');
+    });
+
+    // Close settings with Escape
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        if (document.getElementById('settings-panel').classList.contains('open')) {
+          closeSettings();
+        } else if (document.getElementById('confirm-dialog').classList.contains('open')) {
+          closeConfirm();
+        }
+      }
+    });
+
+    /* ===========================================================
+       DATA DELETION
+    =========================================================== */
+    function confirmDeleteData() {
+      closeSettings();
+      document.getElementById('confirm-dialog').classList.add('open');
+    }
+
+    function closeConfirm() {
+      document.getElementById('confirm-dialog').classList.remove('open');
+    }
+
+    function deleteAllData() {
+      STORAGE_KEYS.forEach(function (key) {
+        try {
+          localStorage.removeItem('calma-' + key);
+        } catch (e) {}
+      });
+
+      // Clear textarea values
+      const textareas = document.querySelectorAll('textarea[id^="sem-"], textarea[id^="plan-"]');
+      textareas.forEach(function (ta) { ta.value = ''; });
+
+      // Clear practice log display
+      renderPracticeLog();
+
+      closeConfirm();
+      showToast('Datos eliminados');
+    }
+
+    /* ===========================================================
+       TOAST
+    =========================================================== */
+    let toastTimer = null;
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    /* ===========================================================
+       KEYBOARD NAV: allow Enter/Space on custom elements
+       (All interactive elements are semantic buttons/inputs,
+        so this is just extra safety)
+    =========================================================== */
+    // No additional handlers needed — all are real <button> elements.
+
+    /* ===========================================================
+       PREVENT DOUBLE-TAP ZOOM ON BUTTONS (iOS)
+    =========================================================== */
+    document.addEventListener('dblclick', function (e) {
+      if (e.target.tagName === 'BUTTON') {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+  </script>
+</body>
+</html>
