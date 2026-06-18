@@ -29,6 +29,10 @@
       --red-alert: #7a4a4a;
       --orb-color: rgba(90, 107, 140, 0.3);
       --orb-glow: rgba(90, 107, 140, 0.15);
+      --prep-accent: #8a7a50;
+      --prep-text: #c8b878;
+      --prep-orb-color: rgba(138, 120, 80, 0.22);
+      --prep-orb-glow: rgba(138, 120, 80, 0.1);
 
       --font-size-base: 1rem;
       --font-size-sm: 0.875rem;
@@ -221,6 +225,19 @@
 
     .btn-crisis:hover {
       background: #5a8a7d;
+    }
+
+    .btn-prep {
+      background: rgba(138, 120, 80, 0.25);
+      color: var(--prep-text);
+      border: 1px solid rgba(138, 120, 80, 0.45);
+      width: 100%;
+      padding: 1.1rem 1.5rem;
+      font-size: var(--font-size-lg);
+    }
+
+    .btn-prep:hover {
+      background: rgba(138, 120, 80, 0.4);
     }
 
     .btn-ghost {
@@ -1477,6 +1494,225 @@
     }
 
     .log-clear-btn:hover { color: var(--text-primary); }
+
+    /* =====================================================
+       PREP ZONE
+    ===================================================== */
+    #screen-prep {
+      background: var(--bg-dark);
+    }
+
+    .prep-header {
+      padding: 3rem 1.5rem 1.5rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(138, 146, 168, 0.1);
+    }
+
+    .prep-header h1 {
+      font-size: var(--font-size-xl);
+      color: var(--text-primary);
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .prep-header p {
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .prep-callout {
+      background: rgba(138, 120, 80, 0.1);
+      border-left: 3px solid var(--prep-accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 0.85rem 1rem;
+      margin: 1rem 0;
+      font-size: var(--font-size-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+
+    .prep-anchor {
+      background: rgba(138, 120, 80, 0.12);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin: 0.85rem 0;
+      text-align: center;
+      font-size: var(--font-size-lg);
+      color: var(--prep-text);
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    /* Trigger chips */
+    .trigger-category {
+      margin-bottom: 1.1rem;
+    }
+
+    .trigger-category-label {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .trigger-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .trigger-chip {
+      background: rgba(138, 146, 168, 0.06);
+      border: 1px solid rgba(138, 146, 168, 0.2);
+      border-radius: 2rem;
+      padding: 0.35rem 0.85rem;
+      font-size: var(--font-size-sm);
+      font-family: inherit;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition), color var(--transition);
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    .trigger-chip.selected {
+      background: rgba(138, 120, 80, 0.2);
+      border-color: var(--prep-accent);
+      color: var(--prep-text);
+    }
+
+    .trigger-chip:focus-visible {
+      outline: 2px solid var(--prep-accent);
+      outline-offset: 2px;
+    }
+
+    /* Prep textareas */
+    .prep-textarea {
+      width: 100%;
+      background: rgba(26, 29, 36, 0.6);
+      border: 1px solid rgba(138, 120, 80, 0.25);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: var(--font-size-sm);
+      padding: 0.65rem 0.85rem;
+      resize: vertical;
+      min-height: 3.5rem;
+      line-height: 1.6;
+      margin-top: 0.5rem;
+    }
+
+    .prep-textarea:focus {
+      outline: 2px solid var(--prep-accent);
+      outline-offset: 0;
+      border-color: var(--prep-accent);
+    }
+
+    .prep-textarea::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+
+    /* Routine blocks */
+    .routine-block {
+      margin-bottom: 1.1rem;
+    }
+
+    .routine-block-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 0.35rem;
+    }
+
+    /* Box breathing screen */
+    #screen-prep-breathing {
+      background: var(--bg-dark);
+    }
+
+    .box-breathing-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 4rem 1.5rem 2rem;
+      text-align: center;
+    }
+
+    .box-orb-wrapper {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 2rem;
+    }
+
+    .box-orb {
+      width: 100%;
+      height: 100%;
+      border-radius: 1.5rem;
+      background: var(--prep-orb-color);
+      box-shadow: 0 0 30px var(--prep-orb-glow);
+      border: 1.5px solid rgba(138, 120, 80, 0.4);
+      transform: scale(1);
+      transition: transform linear;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .box-orb-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-size-base);
+      color: var(--prep-text);
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .box-phase-dots {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .box-phase-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: rgba(138, 120, 80, 0.2);
+      transition: background var(--transition);
+    }
+
+    .box-phase-dot.active {
+      background: var(--prep-text);
+    }
+
+    .box-orb-reduced {
+      display: none;
+      font-size: var(--font-size-lg);
+      color: var(--prep-text);
+      margin-bottom: 2rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .box-orb {
+        transition: none !important;
+        transform: scale(1) !important;
+      }
+      .box-orb-reduced { display: block; }
+      .box-orb-wrapper { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -1502,6 +1738,9 @@
       <p class="entry-subtitle">Aquí puedes practicar o buscar alivio cuando lo necesitas.</p>
 
       <div class="entry-buttons" role="group" aria-label="¿Qué necesitas ahora?">
+        <button class="btn btn-prep" onclick="navigateTo('prep')" aria-label="Ir a la zona de preparación para el examen">
+          Preparándome para el examen
+        </button>
         <button class="btn btn-primary" onclick="navigateTo('calm')" aria-label="Ir a la zona de calma para practicar">
           Quiero practicar
         </button>
@@ -1662,6 +1901,321 @@
       <p class="crisis-exit-note">
         Cuando estés mejor, puedes cerrar.<br>Esto va a estar aquí siempre.
       </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN: PREP ZONE (main accordion)
+  ============================================================ -->
+  <section id="screen-prep" class="screen" role="main" aria-label="Zona de preparación para el examen">
+    <header class="prep-header">
+      <nav style="margin-bottom: 0.75rem; display: flex; justify-content: flex-start;">
+        <button class="btn-back" onclick="navigateTo('entry')" aria-label="Volver al inicio">
+          ← inicio
+        </button>
+      </nav>
+      <h1>Preparándome</h1>
+      <p>Para el examen de karate — activa y dirige tu energía</p>
+    </header>
+
+    <div class="calm-sections" role="list">
+
+      <!-- P0: reframe de activación -->
+      <div class="calm-section" role="listitem">
+        <button class="calm-section-header" onclick="toggleSection('p0')" aria-expanded="false" aria-controls="section-p0" id="header-p0">
+          <span class="section-icon" aria-hidden="true">⚡</span>
+          <span class="section-title-inline">Lo que siento no es peligro</span>
+          <span class="section-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div class="calm-section-body" id="section-p0" role="region" aria-labelledby="header-p0">
+          <div class="psico-text">
+            <p>El corazón rápido, las manos sudadas, las ganas de moverte: eso no es señal de que algo malo va a pasar.</p>
+            <p>Es tu cuerpo preparándose para hacer algo que te importa. La misma reacción que cuando te emociona algo — tu sistema nervioso está listo, no asustado.</p>
+
+            <div class="prep-anchor" role="note">
+              "Mi cuerpo se está preparando para competir,<br>no defendiéndose de algo malo."
+            </div>
+
+            <p style="color: var(--text-secondary); font-size: var(--font-size-sm);">Puedes repetirte esta frase antes de entrar. Es tuya — la puedes cambiar en la sección de herramientas.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- P1: mapa de gatillantes -->
+      <div class="calm-section" role="listitem">
+        <button class="calm-section-header" onclick="toggleSection('p1')" aria-expanded="false" aria-controls="section-p1" id="header-p1">
+          <span class="section-icon" aria-hidden="true">🗺</span>
+          <span class="section-title-inline">Por qué me pongo así antes del examen</span>
+          <span class="section-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div class="calm-section-body" id="section-p1" role="region" aria-labelledby="header-p1">
+          <p style="color: var(--text-secondary); font-size: var(--font-size-sm); margin-bottom: 1rem; line-height: 1.6;">
+            Toca los que te aplican. Puedes agregar los tuyos más abajo.
+          </p>
+
+          <div class="trigger-category">
+            <div class="trigger-category-label">Desempeño</div>
+            <div class="trigger-chips">
+              <button class="trigger-chip" data-trigger="desemp-1" onclick="toggleTrigger(this)" aria-pressed="false">Hacer el kata frente al jurado</button>
+              <button class="trigger-chip" data-trigger="desemp-2" onclick="toggleTrigger(this)" aria-pressed="false">Que me estén evaluando</button>
+              <button class="trigger-chip" data-trigger="desemp-3" onclick="toggleTrigger(this)" aria-pressed="false">Equivocarme en público</button>
+              <button class="trigger-chip" data-trigger="desemp-4" onclick="toggleTrigger(this)" aria-pressed="false">No saber cuándo me toca</button>
+            </div>
+          </div>
+
+          <div class="trigger-category">
+            <div class="trigger-category-label">Sensorial y social</div>
+            <div class="trigger-chips">
+              <button class="trigger-chip" data-trigger="sens-1" onclick="toggleTrigger(this)" aria-pressed="false">El ruido del dojo</button>
+              <button class="trigger-chip" data-trigger="sens-2" onclick="toggleTrigger(this)" aria-pressed="false">Mucha gente mirando</button>
+              <button class="trigger-chip" data-trigger="sens-3" onclick="toggleTrigger(this)" aria-pressed="false">Estar cerca de otros</button>
+              <button class="trigger-chip" data-trigger="sens-4" onclick="toggleTrigger(this)" aria-pressed="false">Esperar en un espacio lleno</button>
+            </div>
+          </div>
+
+          <div class="plan-field" style="margin-top: 0.75rem;">
+            <label for="prep-triggers-custom">Otros que quieras agregar:</label>
+            <textarea
+              id="prep-triggers-custom"
+              class="prep-textarea"
+              placeholder=""
+              aria-label="Mis gatillantes adicionales"
+              oninput="saveToStorage('prep-triggers-custom', this.value)"
+              rows="2"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- P2: canalizar energía -->
+      <div class="calm-section" role="listitem">
+        <button class="calm-section-header" onclick="toggleSection('p2')" aria-expanded="false" aria-controls="section-p2" id="header-p2">
+          <span class="section-icon" aria-hidden="true">🔋</span>
+          <span class="section-title-inline">Canalizar la energía</span>
+          <span class="section-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div class="calm-section-body" id="section-p2" role="region" aria-labelledby="header-p2">
+          <div class="tools-grid">
+
+            <!-- Respiración en caja -->
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-icon" aria-hidden="true">⬜</span>
+                <span class="tool-title">Respiración en caja</span>
+              </div>
+              <p class="tool-desc">4 segundos cada fase: inhalar · aguantar · exhalar · descansar. Mantiene la alerta y el control — sin bajar la energía que necesitas.</p>
+              <p class="tool-desc" style="font-style: italic; font-size: var(--font-size-sm);">Distinta a la respiración de calma — es para mantener el foco activo, no para tranquilizarte.</p>
+              <button class="tool-action" onclick="navigateTo('prep-breathing')" style="border-color: rgba(138,120,80,0.4); color: var(--prep-text);" aria-label="Practicar respiración en caja">
+                Practicar →
+              </button>
+            </div>
+
+            <!-- Descarga física -->
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-icon" aria-hidden="true">💪</span>
+                <span class="tool-title">Descarga física controlada</span>
+              </div>
+              <p class="tool-desc">Suelta la energía física antes de entrar:</p>
+              <div style="margin-top: 0.5rem;">
+                <div class="grounding-step" style="margin-bottom: 0.4rem;">
+                  <span style="font-size: 1.1rem;">🙌</span>
+                  <span class="grounding-text">Sacude las manos y piernas fuerte</span>
+                </div>
+                <div class="grounding-step" style="margin-bottom: 0.4rem;">
+                  <span style="font-size: 1.1rem;">🦘</span>
+                  <span class="grounding-text">Un salto suave en el lugar</span>
+                </div>
+                <div class="grounding-step">
+                  <span style="font-size: 1.1rem;">💨</span>
+                  <span class="grounding-text">Exhala fuerte una vez — suelta la tensión</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mi frase -->
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-icon" aria-hidden="true">💬</span>
+                <span class="tool-title">Mi frase antes de competir</span>
+              </div>
+              <p class="tool-desc">Una frase corta que te dices a ti mismo. Escribe la que funcione para vos — idealmente con tu terapeuta:</p>
+              <textarea
+                id="prep-power-phrase"
+                class="prep-textarea"
+                placeholder="Ej: Ya practiqué esto. Mi cuerpo está listo."
+                aria-label="Mi frase de autoinstrucción"
+                oninput="saveToStorage('prep-power-phrase', this.value)"
+                rows="2"
+              ></textarea>
+            </div>
+
+            <!-- Ensayo mental -->
+            <div class="tool-card">
+              <div class="tool-card-header">
+                <span class="tool-icon" aria-hidden="true">🥋</span>
+                <span class="tool-title">Ensayo mental del kata</span>
+              </div>
+              <p class="tool-desc">Cierra los ojos y recorre la secuencia en tu mente, movimiento a movimiento. Sin presión — como practicando.</p>
+              <div class="prep-callout" role="note" style="margin-top: 0.5rem; font-size: var(--font-size-sm);">
+                La secuencia exacta de tu kata va aquí — para completar con tu instructor.
+              </div>
+              <textarea
+                id="prep-kata-sequence"
+                class="prep-textarea"
+                placeholder="Ej: posición inicial → giro → bloqueo..."
+                aria-label="Secuencia de mi kata"
+                oninput="saveToStorage('prep-kata-sequence', this.value)"
+                rows="3"
+              ></textarea>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- P3: ensayo del ambiente -->
+      <div class="calm-section" role="listitem">
+        <button class="calm-section-header" onclick="toggleSection('p3')" aria-expanded="false" aria-controls="section-p3" id="header-p3">
+          <span class="section-icon" aria-hidden="true">🏛</span>
+          <span class="section-title-inline">Cómo va a ser el día del examen</span>
+          <span class="section-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div class="calm-section-body" id="section-p3" role="region" aria-labelledby="header-p3">
+          <div class="psico-text">
+            <p>Saber qué va a pasar reduce la ansiedad anticipatoria. Esto es lo que puedes esperar:</p>
+
+            <div style="margin-top: 0.75rem; margin-bottom: 0.75rem;">
+              <div class="grounding-step" style="margin-bottom: 0.5rem;">
+                <span style="font-size: 1.1rem; flex-shrink: 0;">👥</span>
+                <span class="grounding-text"><strong>Quién va a estar:</strong> jurado, otros estudiantes, familias.</span>
+              </div>
+              <div class="grounding-step" style="margin-bottom: 0.5rem;">
+                <span style="font-size: 1.1rem; flex-shrink: 0;">🔊</span>
+                <span class="grounding-text"><strong>Sonidos:</strong> golpes, voces, aplausos intermitentes.</span>
+              </div>
+              <div class="grounding-step" style="margin-bottom: 0.5rem;">
+                <span style="font-size: 1.1rem; flex-shrink: 0;">⏳</span>
+                <span class="grounding-text"><strong>Tiempo de espera:</strong> hay que esperar hasta que te llamen.</span>
+              </div>
+              <div class="grounding-step">
+                <span style="font-size: 1.1rem; flex-shrink: 0;">🚪</span>
+                <span class="grounding-text"><strong>Posible opción:</strong> coordinar con tu instructor si puedes retirarte un momento durante la espera. <span style="color: var(--text-secondary);">[Consultar antes del día]</span></span>
+              </div>
+            </div>
+
+            <div class="plan-field">
+              <label for="prep-env-notes">Lo que ya sé del lugar / lo que quiero recordar:</label>
+              <textarea
+                id="prep-env-notes"
+                class="prep-textarea"
+                placeholder=""
+                aria-label="Notas sobre el ambiente del examen"
+                oninput="saveToStorage('prep-env-notes', this.value)"
+                rows="3"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- P4: mi rutina -->
+      <div class="calm-section" role="listitem">
+        <button class="calm-section-header" onclick="toggleSection('p4')" aria-expanded="false" aria-controls="section-p4" id="header-p4">
+          <span class="section-icon" aria-hidden="true">📅</span>
+          <span class="section-title-inline">Mi rutina antes de competir</span>
+          <span class="section-chevron" aria-hidden="true">▼</span>
+        </button>
+        <div class="calm-section-body" id="section-p4" role="region" aria-labelledby="header-p4">
+          <p style="color: var(--text-secondary); font-size: var(--font-size-sm); margin-bottom: 1rem; line-height: 1.6;">
+            Escribe tus propios pasos para cada momento. Complétalo con tu terapeuta.
+          </p>
+
+          <div class="routine-block">
+            <div class="routine-block-label">
+              <span aria-hidden="true">🌙</span> La noche antes
+            </div>
+            <textarea
+              id="prep-routine-night"
+              class="prep-textarea"
+              placeholder=""
+              aria-label="Mi rutina la noche antes del examen"
+              oninput="saveToStorage('prep-routine-night', this.value)"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="routine-block">
+            <div class="routine-block-label">
+              <span aria-hidden="true">☀️</span> La mañana del examen
+            </div>
+            <textarea
+              id="prep-routine-morning"
+              class="prep-textarea"
+              placeholder=""
+              aria-label="Mi rutina la mañana del examen"
+              oninput="saveToStorage('prep-routine-morning', this.value)"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="routine-block">
+            <div class="routine-block-label">
+              <span aria-hidden="true">⏱</span> Los minutos antes de subir
+            </div>
+            <textarea
+              id="prep-routine-before"
+              class="prep-textarea"
+              placeholder=""
+              aria-label="Mi rutina los minutos antes de competir"
+              oninput="saveToStorage('prep-routine-before', this.value)"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <p class="plan-save-note">Guardado automáticamente en este dispositivo.</p>
+        </div>
+      </div>
+
+      <div class="calm-bottom-spacer" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN: PREP BREATHING (box breathing 4-4-4-4)
+  ============================================================ -->
+  <section id="screen-prep-breathing" class="screen" role="main" aria-label="Respiración en caja">
+    <nav class="screen-nav">
+      <button class="btn-back" onclick="stopBoxBreathing(); navigateTo('prep')" aria-label="Volver a zona de preparación">
+        ← volver
+      </button>
+      <span class="screen-nav-title">respiración en caja</span>
+    </nav>
+
+    <div class="box-breathing-container">
+      <!-- Reduced motion alternative -->
+      <div class="box-orb-reduced" aria-live="polite" id="box-orb-text-cue">
+        <span id="box-breath-phase-text">inhala</span>
+      </div>
+
+      <!-- Box visual -->
+      <div class="box-orb-wrapper" aria-hidden="true">
+        <div class="box-orb" id="box-orb"></div>
+        <div class="box-orb-label" id="box-orb-label">inhala</div>
+      </div>
+
+      <div class="box-phase-dots" role="list" aria-label="Fase actual de la respiración">
+        <div class="box-phase-dot active" id="box-dot-0" role="listitem" aria-label="Inhalar"></div>
+        <div class="box-phase-dot" id="box-dot-1" role="listitem" aria-label="Aguantar"></div>
+        <div class="box-phase-dot" id="box-dot-2" role="listitem" aria-label="Exhalar"></div>
+        <div class="box-phase-dot" id="box-dot-3" role="listitem" aria-label="Descansar"></div>
+      </div>
+
+      <p class="breathing-rhythm-info">Inhala 4 s · Aguanta 4 s · Exhala 4 s · Descansa 4 s</p>
+
+      <button class="btn btn-text breathing-stop" onclick="stopBoxBreathing(); navigateTo('prep')" aria-label="Detener y volver">
+        Detener
+      </button>
     </div>
   </section>
 
@@ -2116,6 +2670,8 @@
       'crisis-breathing',
       'crisis-stay',
       'crisis-pressure',
+      'prep',
+      'prep-breathing',
       'calm',
       'calm-breathing',
       'grounding'
@@ -2159,6 +2715,7 @@
     let currentScreen = 'entry';
     let breathingTimers = { crisis: null, calm: null };
     let breathingRhythms = { crisis: '4-6', calm: '4-6' };
+    let boxBreathingTimer = null;
     let groundingStep = 0;
     let prefersReducedMotion = false;
 
@@ -2179,6 +2736,9 @@
       // Load saved text areas
       loadSavedData();
 
+      // Load prep zone data
+      loadPrepData();
+
       // Load practice log
       renderPracticeLog();
 
@@ -2196,6 +2756,9 @@
       }
       if (currentScreen === 'calm-breathing') {
         stopBreathing('calm');
+      }
+      if (currentScreen === 'prep-breathing') {
+        stopBoxBreathing();
       }
       if (currentScreen === 'grounding') {
         stopGrounding();
@@ -2241,6 +2804,8 @@
         startBreathing('crisis');
       } else if (screenId === 'calm-breathing') {
         startBreathing('calm');
+      } else if (screenId === 'prep-breathing') {
+        startBoxBreathing();
       } else if (screenId === 'grounding') {
         startGrounding();
       }
@@ -2456,7 +3021,10 @@
       'sem-green', 'sem-yellow', 'sem-red',
       'plan-signal', 'plan-first', 'plan-place', 'plan-tools', 'plan-back',
       'practice-log',
-      'settings-high-contrast', 'settings-large-text'
+      'settings-high-contrast', 'settings-large-text',
+      'prep-triggers', 'prep-triggers-custom', 'prep-power-phrase',
+      'prep-kata-sequence', 'prep-env-notes',
+      'prep-routine-night', 'prep-routine-morning', 'prep-routine-before'
     ];
 
     function saveToStorage(key, value) {
@@ -2635,8 +3203,14 @@
       });
 
       // Clear textarea values
-      const textareas = document.querySelectorAll('textarea[id^="sem-"], textarea[id^="plan-"]');
+      const textareas = document.querySelectorAll('textarea[id^="sem-"], textarea[id^="plan-"], textarea[id^="prep-"]');
       textareas.forEach(function (ta) { ta.value = ''; });
+
+      // Deselect trigger chips
+      document.querySelectorAll('.trigger-chip').forEach(function (chip) {
+        chip.classList.remove('selected');
+        chip.setAttribute('aria-pressed', 'false');
+      });
 
       // Clear practice log display
       renderPracticeLog();
@@ -2667,6 +3241,127 @@
         so this is just extra safety)
     =========================================================== */
     // No additional handlers needed — all are real <button> elements.
+
+    /* ===========================================================
+       BOX BREATHING (4-4-4-4 — Prep zone only)
+       Distinct from the long-exhale orb: square shape, warm
+       amber tones, 4 equal phases — maintains alert focus.
+    =========================================================== */
+    const BOX_RHYTHM = {
+      phases: [
+        { label: 'inhala',   duration: 4000, scale: 1.1,  dotIndex: 0 },
+        { label: 'aguanta',  duration: 4000, scale: 1.1,  dotIndex: 1 },
+        { label: 'exhala',   duration: 4000, scale: 1.0,  dotIndex: 2 },
+        { label: 'descansa', duration: 4000, scale: 1.0,  dotIndex: 3 }
+      ]
+    };
+
+    function startBoxBreathing() {
+      stopBoxBreathing();
+
+      const orb    = document.getElementById('box-orb');
+      const label  = document.getElementById('box-orb-label');
+      const textCue = document.getElementById('box-breath-phase-text');
+
+      if (!orb) return;
+
+      let phaseIndex = 0;
+
+      function runPhase() {
+        const phase = BOX_RHYTHM.phases[phaseIndex];
+
+        if (label) label.textContent = phase.label;
+        if (textCue) textCue.textContent = phase.label;
+
+        if (!prefersReducedMotion) {
+          orb.style.transition = 'transform ' + (phase.duration / 1000) + 's linear';
+          orb.style.transform = 'scale(' + phase.scale + ')';
+        }
+
+        // Update phase dots
+        for (var i = 0; i < 4; i++) {
+          var dot = document.getElementById('box-dot-' + i);
+          if (dot) dot.classList.toggle('active', i === phase.dotIndex);
+        }
+
+        boxBreathingTimer = setTimeout(function () {
+          phaseIndex = (phaseIndex + 1) % BOX_RHYTHM.phases.length;
+          runPhase();
+        }, phase.duration);
+      }
+
+      runPhase();
+    }
+
+    function stopBoxBreathing() {
+      if (boxBreathingTimer) {
+        clearTimeout(boxBreathingTimer);
+        boxBreathingTimer = null;
+      }
+
+      var orb = document.getElementById('box-orb');
+      if (orb) {
+        orb.style.transition = 'transform 0.5s ease';
+        orb.style.transform = 'scale(1)';
+      }
+
+      var label = document.getElementById('box-orb-label');
+      if (label) label.textContent = 'inhala';
+
+      var textCue = document.getElementById('box-breath-phase-text');
+      if (textCue) textCue.textContent = 'inhala';
+
+      for (var i = 0; i < 4; i++) {
+        var dot = document.getElementById('box-dot-' + i);
+        if (dot) dot.classList.toggle('active', i === 0);
+      }
+    }
+
+    /* ===========================================================
+       TRIGGER CHIPS (Prep zone P1)
+    =========================================================== */
+    function toggleTrigger(btn) {
+      var isSelected = btn.classList.contains('selected');
+      btn.classList.toggle('selected', !isSelected);
+      btn.setAttribute('aria-pressed', String(!isSelected));
+
+      var allChips = document.querySelectorAll('.trigger-chip');
+      var selected = [];
+      allChips.forEach(function (c) {
+        if (c.classList.contains('selected')) selected.push(c.dataset.trigger);
+      });
+      saveToStorage('prep-triggers', JSON.stringify(selected));
+    }
+
+    function loadTriggers() {
+      var raw = getFromStorage('prep-triggers');
+      if (!raw) return;
+      try {
+        var selected = JSON.parse(raw);
+        selected.forEach(function (triggerId) {
+          var chip = document.querySelector('[data-trigger="' + triggerId + '"]');
+          if (chip) {
+            chip.classList.add('selected');
+            chip.setAttribute('aria-pressed', 'true');
+          }
+        });
+      } catch (e) {}
+    }
+
+    /* ===========================================================
+       PREP DATA LOAD
+    =========================================================== */
+    function loadPrepData() {
+      var prepFields = [
+        'prep-triggers-custom', 'prep-power-phrase', 'prep-kata-sequence',
+        'prep-env-notes', 'prep-routine-night', 'prep-routine-morning', 'prep-routine-before'
+      ];
+      prepFields.forEach(function (key) {
+        var el = document.getElementById(key);
+        if (el) el.value = getFromStorage(key);
+      });
+      loadTriggers();
+    }
 
     /* ===========================================================
        PREVENT DOUBLE-TAP ZOOM ON BUTTONS (iOS)
